@@ -1,0 +1,49 @@
+# --- Unity 自动生成的临时文件夹 ---
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]sersettings/
+/[MemoryCaptures/
+
+# --- 资源导入时的临时文件 ---
+*.phaser
+*.pidb
+*.bak
+*.user
+*.userprefs
+
+# --- 编程环境 (Rider / VS / VS Code) 产生的垃圾 ---
+.idea/
+.vs/
+*.csproj
+*.sln
+*.suo
+*.user
+*.unityproj
+*.booproj
+*.pdb
+*.opendb
+*.db
+*.dgml
+*.VC.db
+*.VC.opendb
+
+# --- 操作系统产生的隐藏文件 ---
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# --- 崩溃日志与测试报告 ---
+sysinfo.txt
+/[Aa]ssets/AssetStoreTools*
+
+# --- WebGL 构建产生的临时文件 ---
+/[Aa]ssets/StreamingAssets/aa/*
+/[Aa]ssets/StreamingAssets/UnityServicesConfig.json
+
+# 从 UE 切换过来的，防止有些 URP 缓存混入 ---
+/[Aa]ssets/JobTemp/
