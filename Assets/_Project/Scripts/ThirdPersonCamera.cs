@@ -23,6 +23,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         // 初始化角度
         Vector3 angles = transform.eulerAngles;
         x = angles.y;
