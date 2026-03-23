@@ -1,133 +1,68 @@
+using System;
+using Inputs;
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
-public class PlayerMovement : MonoBehaviour
+namespace Movement
 {
-    public Transform cameraTransform;
-    public PlayerLockOn lockOn;
-    public PlayerStamina stamina;
-    CharacterController controller;
-
-    public float walkSpeed = 3f;
-    public float runSpeed = 6f;
-    public float turnSmoothTime = 0.1f;
-    public float dodgeSpeed = 10f;
-    public float dodgeDuration = 0.3f;
-    public float jumpSpeed = 6f;
-    public float gravity = 20f;
-
-    float turnSmoothVelocity;
-    Vector3 moveDirection;
-    Vector3 dodgeDirection;
-    float dodgeTimer;
-    float currentMovingSpeed;
-    float verticalVelocity = -2f;
-
-    public bool IsDodging { get; private set; }
-    public bool IsJumping { get; private set; }
-    public bool IsSprinting { get; private set; }
-
-    void Awake()
+    public class PlayerMovement : MonoBehaviour
     {
-        controller = GetComponent<CharacterController>();
-        if (!cameraTransform) cameraTransform = Camera.main ? Camera.main.transform : null;
-        if (!lockOn) lockOn = GetComponent<PlayerLockOn>();
-        if (!stamina) stamina = GetComponent<PlayerStamina>();
-    }
+        [SerializeField] Transform _playerTransform;
 
-    public void Tick()
-    {
-        HandleDodge();
-        HandleJumpAndGravity();
-        HandleMove();
-    }
+        [Header("component")] [SerializeField] private CharacterController _characterController;
 
-    void HandleMove()
-    {
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-        Vector3 inputDir = new Vector3(h, 0f, v).normalized;
+        [Header("FreeLockState")] public float FreeLockMaxSpeed = 10f;
+        public float FreeLockSpeed = 10f;
+        public float FreeLockRotationLerpTime = 3f;
 
-        float targetSpeed = 0f;
-        if (inputDir.magnitude >= 0.1f)
+        public Vector3 velocity => _characterController.velocity;
+
+        public CharacterController CharacterController
         {
-            IsSprinting = Input.GetKey(KeyCode.LeftShift);
-            targetSpeed = IsSprinting ? runSpeed : walkSpeed;
+            get => _characterController;
+            set => _characterController = value;
         }
-        else
+
+        private Transform _mainCamera;
+
+        private void Awake()
         {
-            IsSprinting = false;
+            _mainCamera = Camera.main.transform;
         }
-        bool allowSprint = stamina.TickSprint(IsSprinting, Time.deltaTime);
-        if (!allowSprint) IsSprinting = false;
 
-        currentMovingSpeed = Mathf.Lerp(currentMovingSpeed, targetSpeed, Time.deltaTime * 10f);
-
-        if (inputDir.magnitude >= 0.1f)
+        public Vector3 CamRelativeMotionVector(Vector2 input2DMovementVector)
         {
-            if (!(lockOn && lockOn.IsLocked))
+            Vector3 forwardVector = _mainCamera.forward * input2DMovementVector.y;
+            Vector3 rightVector = _mainCamera.right * input2DMovementVector.x;
+            Vector3 relativeVector = forwardVector + rightVector;
+            relativeVector.y = 0f;
+
+            return relativeVector;
+        }
+
+        public Vector3 TargetRelativeMotionVector(Vector3 targetPos)
+        {
+            Vector3 relativeVector = targetPos - transform.position;
+            relativeVector.y = 0f;
+            return relativeVector;
+        }
+
+        public void LookRotation(Vector3 movementVector, float deltaTime)
+        {
+            if (movementVector != Vector3.zero)
             {
-                float targetAngle = Mathf.Atan2(inputDir.x, inputDir.z) * Mathf.Rad2Deg + (cameraTransform ? cameraTransform.eulerAngles.y : transform.eulerAngles.y);
-                float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-                transform.rotation = Quaternion.Euler(0f, angle, 0f);
-                moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-            }
-            else
-            {
-                Vector3 forward = transform.forward;
-                Vector3 right = transform.right;
-                forward.y = 0; right.y = 0;
-                moveDirection = (forward * v + right * h).normalized;
+                transform.rotation = Quaternion.Lerp(
+                    transform.rotation, Quaternion.LookRotation(movementVector), deltaTime * FreeLockRotationLerpTime);
             }
         }
 
-        Vector3 horizontalMove = moveDirection * currentMovingSpeed;
-        if (IsDodging) horizontalMove = dodgeDirection * dodgeSpeed;
-        Vector3 finalMove = horizontalMove + new Vector3(0f, verticalVelocity, 0f);
-        controller.Move(finalMove * Time.deltaTime);
-    }
+        public void Move(Vector3 movementVector, float speed, float deltaTime)
+        {
+            _characterController.Move(movementVector * (speed * deltaTime));
+        }
 
-    void HandleDodge()
-    {
-        if (IsDodging)
+        public void RotateHumanModel(float angle)
         {
-            dodgeTimer -= Time.deltaTime;
-            if (dodgeTimer <= 0f) IsDodging = false;
-            return;
+            _playerTransform.localRotation = Quaternion.Euler(0, angle, 0);
         }
-        if (Input.GetKeyDown(KeyCode.LeftAlt))
-        {
-            if (stamina.Consume(stamina.dodgeCost))
-            {
-                IsDodging = true;
-                dodgeTimer = dodgeDuration;
-                Vector3 inputDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
-                if (inputDir.sqrMagnitude > 0.01f)
-                {
-                    float yaw = (lockOn && lockOn.IsLocked) ? transform.eulerAngles.y : (cameraTransform ? cameraTransform.eulerAngles.y : transform.eulerAngles.y);
-                    Vector3 world = Quaternion.Euler(0f, yaw, 0f) * inputDir.normalized;
-                    dodgeDirection = world;
-                }
-                else
-                {
-                    dodgeDirection = transform.forward;
-                }
-            }
-        }
-    }
-
-    void HandleJumpAndGravity()
-    {
-        if (controller.isGrounded)
-        {
-            IsJumping = false;
-            if (verticalVelocity < 0f) verticalVelocity = -2f;
-            if (Input.GetKeyDown(KeyCode.Space) && stamina.Consume(stamina.attackLightCost))
-            {
-                verticalVelocity = jumpSpeed;
-                IsJumping = true;
-            }
-        }
-        verticalVelocity -= gravity * Time.deltaTime;
     }
 }

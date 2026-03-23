@@ -128,12 +128,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 319864214}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &218735972 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 97ada40f57d401540b8eafeeba1f0e9c,
-    type: 3}
-  m_PrefabInstance: {fileID: 319864214}
-  m_PrefabAsset: {fileID: 0}
 --- !u!143 &218735974
 CharacterController:
   m_ObjectHideFlags: 0
@@ -160,25 +154,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.89, z: 0}
---- !u!114 &218735976
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 218735970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6a6ff76403d89641a10282e6bc9dad0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  max: 100
-  value: 100
-  regen: 20
-  dodgeCost: 20
-  attackLightCost: 15
-  attackHeavyCost: 30
-  sprintCostPerSecond: 10
 --- !u!114 &218735977
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,47 +166,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84e47048e5ade504b8e8c13da78afb76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraTransform: {fileID: 0}
-  lockOn: {fileID: 0}
-  stamina: {fileID: 0}
-  walkSpeed: 3
-  runSpeed: 6
-  turnSmoothTime: 0.1
-  dodgeSpeed: 10
-  dodgeDuration: 0.3
-  jumpSpeed: 6
-  gravity: 20
---- !u!114 &218735978
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 218735970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9ce715e7c070694b947cbe4be5ed80d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 0}
-  stamina: {fileID: 0}
---- !u!114 &218735979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 218735970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a1d4b2a64c247e4baaef4901a200c39, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lockTarget: {fileID: 0}
-  lockableMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  lockOnRadius: 12
+  _playerTransform: {fileID: 0}
+  _characterController: {fileID: 0}
+  FreeLockMaxSpeed: 10
+  FreeLockSpeed: 10
+  FreeLockRotationLerpTime: 3
 --- !u!114 &218735980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,10 +184,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
-  lockOn: {fileID: 0}
   movement: {fileID: 0}
-  combat: {fileID: 0}
---- !u!114 &218735981
+--- !u!114 &218735982
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -257,31 +194,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 218735970}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37e05a3e08921b3498b67696fb5aaf61, type: 3}
+  m_Script: {fileID: 11500000, guid: 93ca863a1cbb07844b6fe103bdaf5dbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
-  cameraTransform: {fileID: 0}
-  lockTarget: {fileID: 0}
-  lockableMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  isLocked: 0
-  walkSpeed: 3
-  runSpeed: 6
-  turnSmoothTime: 0.1
-  staminaMax: 100
-  stamina: 100
-  staminaRegen: 20
-  dodgeCost: 20
-  attackLightCost: 15
-  attackHeavyCost: 30
-  sprintCostPerSecond: 10
-  lockOnRadius: 12
-  dodgeSpeed: 10
-  dodgeDuration: 0.3
-  jumpSpeed: 6
-  gravity: 20
+  StopInput: 0
 --- !u!1001 &319864214
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -365,23 +281,11 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97ada40f57d401540b8eafeeba1f0e9c,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 218735979}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97ada40f57d401540b8eafeeba1f0e9c,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 218735978}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97ada40f57d401540b8eafeeba1f0e9c,
-        type: 3}
-      insertIndex: -1
       addedObject: {fileID: 218735977}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97ada40f57d401540b8eafeeba1f0e9c,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 218735976}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97ada40f57d401540b8eafeeba1f0e9c,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 218735981}
+      addedObject: {fileID: 218735982}
   m_SourcePrefab: {fileID: 100100000, guid: 97ada40f57d401540b8eafeeba1f0e9c, type: 3}
 --- !u!1 &330585543
 GameObject:
@@ -533,17 +437,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4305ee9c51a1e074f82afdf9d252ae1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 218735972}
-  offset: {x: 0, y: 1.5, z: 0}
-  lockFocusBlend: 0.6
-  distance: 5
-  minDistance: 2
-  maxDistance: 10
-  collisionRadius: 0.2
-  collisionBack: 0.05
-  xSpeed: 200
-  ySpeed: 120
-  smoothTime: 0.1
 --- !u!1001 &383758075
 PrefabInstance:
   m_ObjectHideFlags: 0
